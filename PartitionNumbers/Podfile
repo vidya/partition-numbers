@@ -1,0 +1,23 @@
+platform :ios, '8.0'
+use_frameworks!
+
+target 'PartitionNumbers' do
+  #pod 'AFNetworking', '~> 2.5'
+  #pod 'ORStackView', '~> 2.0'
+
+  pod 'Dollar', '~> 3.0.3'
+  pod 'SwiftyJSON', '~> 2.2.1'
+
+  #pod 'Alamofire', '~> 2.0.0-beta.1'
+end
+
+target 'PartitionNumbersTests' do
+  #pod 'AFNetworking', '~> 2.5'
+  #pod 'ORStackView', '~> 2.0'
+
+  pod 'Dollar', '~> 3.0.3'
+  pod 'SwiftyJSON', '~> 2.2.1'
+
+  #pod 'Alamofire', '~> 2.0.0-beta.1'
+end
+

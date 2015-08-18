@@ -1,0 +1,13 @@
+PODS:
+  - Dollar (3.0.3)
+  - SwiftyJSON (2.2.1)
+
+DEPENDENCIES:
+  - Dollar (~> 3.0.3)
+  - SwiftyJSON (~> 2.2.1)
+
+SPEC CHECKSUMS:
+  Dollar: ae37f1da42cdc16061fcc1e91a070281b207f5c8
+  SwiftyJSON: ae2d0a3d68025d136602a33c4ee215091ced3e33
+
+COCOAPODS: 0.38.2

@@ -14,9 +14,10 @@ import SpriteKit
 class EndpointContainer : SKNode {
  
   var
-    endpointList : [Endpoint] = [],
+    targetNumList     : [Int] = [],
+    endpointList      : [Endpoint] = [],
   
-    endpointIndex = 0
+    endpointIndex     = 0
   
   convenience init(inLocation: CGPoint) {
     var
@@ -35,13 +36,21 @@ class EndpointContainer : SKNode {
     
     self.init()
 
+    var targetNum : Int
+    
     endpointList = []
     for groupCount in 0 ..< 3 {
       for eltCount in 0 ..< 3 {
         
-        let targetNum                  = Int(arc4random() % 88) + 11
+        // avoid duplicates in target numbers
+        //
+        do {
+          targetNum = Int(arc4random() % 88) + 11
+        } while contains(targetNumList, targetNum)
 
-        params["targetNum"] = targetNum
+        targetNumList += [targetNum]
+        
+        params["targetNum"]   = targetNum
         params["location"]    = NSValue(CGPoint: location)
 
         let endPoint = Endpoint(params: params)

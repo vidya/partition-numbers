@@ -7,15 +7,13 @@
 //
 
 import Foundation
-
 import SpriteKit
-
 
 class PartitionableNumberContainer : SKNode {
  
   var
-    targetNumList     : [Int] = [],
-    partitionableNumberList: [PartitionableNumber] = [],
+    targetNumList                 : [Int] = [],
+    partitionableNumberList       : [PartitionableNumber] = [],
   
     endpointIndex     = 0
   

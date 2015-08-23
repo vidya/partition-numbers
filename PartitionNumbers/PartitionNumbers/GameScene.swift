@@ -9,7 +9,6 @@
 import SpriteKit
 import Dollar
 
-
 class GameScene: SKScene, SKPhysicsContactDelegate {
   
   enum PhysicsCategory: UInt32 {
@@ -21,13 +20,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  }
   
   var
-    arrowPouchContainer   : ArrowPouchContainer?,
+    arrowPouchContainer           : ArrowPouchContainer?,
   
-    targetBrickContainer  : TargetBrickContainer?,
-    partitionableNumberContainer: PartitionableNumberContainer?,
+    targetBrickContainer          : TargetBrickContainer?,
+    partitionableNumberContainer  : PartitionableNumberContainer?,
   
-    currentPartitionableNumber: PartitionableNumber?,
-    currentTargetNum      = 0
+    currentPartitionableNumber    : PartitionableNumber?,
+  
+    currentTargetNum              = 0
   
   var targetsCompleted : Int = 0 {
     didSet {

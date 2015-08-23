@@ -66,7 +66,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {(success : Bool, allDone: Bool) -> Void in
          self.arrowPouchContainer!.removePouchGroup(arrow.getGroup())
           
-          targetBrickContainer.targetContainer!.removeBrick(brick)
+          self.targetBrickContainer!.removeBrick(brick)
           
           if allDone {
             self.currentEndpoint!.setCompleted()
@@ -142,12 +142,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     arrowPouchContainer!.setTargetNum(currentTargetNum)
 
-    targetBrickContainer.targetContainer = TargetBrickContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
-    let location = CGPointMake(self.frame.midX - 124, targetBrickContainer.targetContainer!.position.y + 120)
+    targetBrickContainer = TargetBrickContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
+    let location = CGPointMake(self.frame.midX - 124, targetBrickContainer!.position.y + 120)
     
-    targetBrickContainer.targetContainer!.createBrickList(self.currentTargetNum, inLocation: location)
+    targetBrickContainer!.createBrickList(self.currentTargetNum, inLocation: location)
     
-    self.addChild(targetBrickContainer.targetContainer!)
+    self.addChild(targetBrickContainer!)
     
     arrowPouchContainer!.getBlockTripletFromApi()
   }

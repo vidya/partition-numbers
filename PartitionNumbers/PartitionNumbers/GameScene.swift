@@ -23,7 +23,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   var
     arrowPouchContainer   : ArrowPouchContainer?,
   
-    targetContainer       : TargetContainer?,
+    targetBrickContainer: TargetBrickContainer?,
     endpointContainer     : EndpointContainer?,
   
     currentEndpoint       : Endpoint?,
@@ -66,7 +66,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         {(success : Bool, allDone: Bool) -> Void in
          self.arrowPouchContainer!.removePouchGroup(arrow.getGroup())
           
-          self.targetContainer!.removeBrick(brick)
+          targetBrickContainer.targetContainer!.removeBrick(brick)
           
           if allDone {
             self.currentEndpoint!.setCompleted()
@@ -142,12 +142,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     arrowPouchContainer!.setTargetNum(currentTargetNum)
 
-    self.targetContainer = TargetContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
-    let location = CGPointMake(self.frame.midX - 124, self.targetContainer!.position.y + 120)
+    targetBrickContainer.targetContainer = TargetBrickContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
+    let location = CGPointMake(self.frame.midX - 124, targetBrickContainer.targetContainer!.position.y + 120)
     
-    self.targetContainer!.createBrickList(self.currentTargetNum, inLocation: location)
+    targetBrickContainer.targetContainer!.createBrickList(self.currentTargetNum, inLocation: location)
     
-    self.addChild(self.targetContainer!)
+    self.addChild(targetBrickContainer.targetContainer!)
     
     arrowPouchContainer!.getBlockTripletFromApi()
   }
@@ -171,7 +171,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   }
 
   func shootArrows(arrows arrowList: [Arrow]) {
-    let targetBricks = targetContainer!.children
+    let targetBricks = targetBrickContainer!.children
 
     var brickNum = targetBricks.count - 1
 

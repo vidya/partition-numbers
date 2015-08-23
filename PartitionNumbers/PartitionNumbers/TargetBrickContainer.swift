@@ -10,7 +10,7 @@ import Foundation
 
 import SpriteKit
 
-class TargetContainer : SKNode {
+class TargetBrickContainer : SKNode {
   
   //  GameScene.swift
   //  TrimSegment

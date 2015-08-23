@@ -46,13 +46,12 @@ class GameViewController: UIViewController {
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .AspectFill
           
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "showAlert:", name: "showAlert", object: nil)
-
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "showAlert:", name: "apiError", object: nil)
+          
             skView.presentScene(scene)
         }
     }
   
-    //-- 
     @objc func showAlert(object : AnyObject) {
       
       // Your alert code.
@@ -87,4 +86,9 @@ class GameViewController: UIViewController {
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+  
+  deinit {
+    NSNotificationCenter.defaultCenter().removeObserver(self)
+  }
+
 }

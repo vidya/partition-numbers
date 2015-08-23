@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import Dollar
 
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -20,11 +21,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  }
   
   var
-    pouchContainer             = PouchContainer(),
-    targetContainer: TargetContainer?,
-    endpointContainer:  EndpointContainer?,
-    currentEndpoint: Endpoint?,
-    currentTargetNum = 0
+    pouchContainer        : PouchContainer?,
+  
+    targetContainer       : TargetContainer?,
+    endpointContainer     : EndpointContainer?,
+  
+    currentEndpoint       : Endpoint?,
+    currentTargetNum      = 0
   
   var targetsCompleted : Int = 0 {
     didSet {
@@ -47,7 +50,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   typealias IntArray = [Int]
   
-
   func didBeginContact(contact: SKPhysicsContact) {
     
     let (firstBody, secondBody) = VJUtil.getBodyPair(contact)
@@ -62,7 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         arrowCollideWithBrick(arrow, brick: brick)
         {(success : Bool, allDone: Bool) -> Void in
-         self.pouchContainer.removePouchGroup(arrow.getGroup())
+         self.pouchContainer!.removePouchGroup(arrow.getGroup())
           
           self.targetContainer!.removeBrick(brick)
           
@@ -121,16 +123,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     addChild(endpointContainer!)
 
-    setNewEndPoint()
+    pouchContainer = PouchContainer()
+    self.addChild(pouchContainer!)
     
-    self.addChild(pouchContainer)
-  }
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleValidTriplet:", name: "validTriplet", object: nil)
+    
+    pouchContainer!.setInvalidTripletObserver()
+    
+    UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 
+    setNewEndPoint()
+  }
+  
   func setNewEndPoint() {
     self.currentEndpoint  = self.endpointContainer!.getNextEndpoint()
     
     self.currentTargetNum = self.currentEndpoint!.targetNum
     
+    pouchContainer!.setTargetNum(currentTargetNum)
+
     self.targetContainer = TargetContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
     let location = CGPointMake(self.frame.midX - 124, self.targetContainer!.position.y + 120)
     
@@ -138,20 +149,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     self.addChild(self.targetContainer!)
     
-    // use a trailing closure in the call
-    //
-    PouchContainer.callArithmeticAPI(currentTargetNum) {
-      (success:Bool, blockArray: [IntArray]) -> Void in
-      
-      if success {
-        self.pouchContainer.addArrowPouches(blockArray)
-      }
-      else {
-        println("---> callArithmeticAPI fails")
-    NSNotificationCenter.defaultCenter().postNotificationName("showAlert", object: nil)
-      }
-    }
+    pouchContainer!.getBlockTripletFromApi()
   }
+  
+  @objc func handleValidTriplet(notificationObject : AnyObject) {
+    print("---> notificationObject = \(notificationObject)")
+    
+    let notification = notificationObject as! NSNotification
+    
+    let userInfo = notification.userInfo as! [String : AnyObject]
+    let blockArray = notification.userInfo!["blockTriplet"] as! [IntArray]
+    
+    self.pouchContainer!.addArrowPouches(blockArray)
+  }
+
   
   override func didMoveToView(view: SKView) {
     /* Setup your scene here */
@@ -184,14 +195,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
   }
 
-//  override func touchesBegan(touches: NSSet, withEvent event: UIEvent)
   override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
   {
 
     for touch: AnyObject in touches {
       let location = touch.locationInNode(self)
       
-      if let btn = pouchContainer.getTouchedPouch(location) {
+      if let btn = pouchContainer!.getTouchedPouch(location) {
         
         let arrowList = btn.createArrows(location)
         shootArrows(arrows: arrowList)
@@ -201,6 +211,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
   override func update(currentTime: CFTimeInterval) {
       /* Called before each frame is rendered */
+  }
+
+  deinit {
+    NSNotificationCenter.defaultCenter().removeObserver(self)
   }
 
 }

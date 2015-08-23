@@ -1,5 +1,5 @@
 //
-//  Endpoint.swift
+//  PartitionableNumber.swift
 //  TrimSegment
 //
 //  Created by Dad on 5/7/15.
@@ -10,7 +10,7 @@ import Foundation
 
 import SpriteKit
 
-class Endpoint : VJSprite {
+class PartitionableNumber : VJSprite {
   var targetNum = 0
   var label : SKLabelNode?
   
@@ -19,7 +19,7 @@ class Endpoint : VJSprite {
     
     targetNum = params["targetNum"] as! Int
 
-    label = getEndpointLabel("\(targetNum)")
+    label = getPartitionableNumberLabel("\(targetNum)")
     
     label!.position = CGPointMake(-1, -6)
     
@@ -30,7 +30,7 @@ class Endpoint : VJSprite {
     label!.text = "X"
   }
   
-  private func getEndpointLabel(inLabel: String) -> SKLabelNode {
+  private func getPartitionableNumberLabel(inLabel: String) -> SKLabelNode {
     
     let label          = SKLabelNode(text: inLabel)
     

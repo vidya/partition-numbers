@@ -23,19 +23,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   var
     arrowPouchContainer   : ArrowPouchContainer?,
   
-    targetBrickContainer: TargetBrickContainer?,
-    endpointContainer     : EndpointContainer?,
+    targetBrickContainer  : TargetBrickContainer?,
+    partitionableNumberContainer: PartitionableNumberContainer?,
   
-    currentEndpoint       : Endpoint?,
+    currentPartitionableNumber: PartitionableNumber?,
     currentTargetNum      = 0
   
   var targetsCompleted : Int = 0 {
     didSet {
       if targetsCompleted < 9 {
-        setNewEndPoint()
+        setNewPartionableNumber()
       }
       else {
-        endpointContainer?.removeFromParent()
+        partitionableNumberContainer?.removeFromParent()
         
         let doneLabel = getDoneLabel("YOU WIN!")
         
@@ -69,7 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
           self.targetBrickContainer!.removeBrick(brick)
           
           if allDone {
-            self.currentEndpoint!.setCompleted()
+            self.currentPartitionableNumber!.setCompleted()
             
             ++self.targetsCompleted
           }
@@ -119,9 +119,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     initPhysicsWorld()
     
-    endpointContainer = EndpointContainer(inLocation: CGPointMake(self.frame.midX - 180, self.frame.midY + 200))
+    partitionableNumberContainer = PartitionableNumberContainer(inLocation: CGPointMake(self.frame.midX - 180, self.frame.midY + 200))
     
-    addChild(endpointContainer!)
+    addChild(partitionableNumberContainer!)
 
     arrowPouchContainer = ArrowPouchContainer()
     self.addChild(arrowPouchContainer!)
@@ -132,13 +132,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 
-    setNewEndPoint()
+    setNewPartionableNumber()
   }
   
-  func setNewEndPoint() {
-    self.currentEndpoint  = self.endpointContainer!.getNextEndpoint()
+  func setNewPartionableNumber() {
+    currentPartitionableNumber  = self.partitionableNumberContainer!.getNextPartitionableNumber()
     
-    self.currentTargetNum = self.currentEndpoint!.targetNum
+    self.currentTargetNum = currentPartitionableNumber!.targetNum
     
     arrowPouchContainer!.setTargetNum(currentTargetNum)
 

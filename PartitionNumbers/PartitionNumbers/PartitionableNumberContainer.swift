@@ -11,11 +11,11 @@ import Foundation
 import SpriteKit
 
 
-class EndpointContainer : SKNode {
+class PartitionableNumberContainer : SKNode {
  
   var
     targetNumList     : [Int] = [],
-    endpointList      : [Endpoint] = [],
+    partitionableNumberList: [PartitionableNumber] = [],
   
     endpointIndex     = 0
   
@@ -55,18 +55,18 @@ class EndpointContainer : SKNode {
     
     targetNumList.sort(<)
     
-    endpointList = []
+    partitionableNumberList = []
     for groupCount in 0 ..< 3 {
       for eltCount in 0 ..< 3 {
 
         params["targetNum"]   = targetNumList[3 * groupCount + eltCount]
         params["location"]    = NSValue(CGPoint: location)
 
-        let endPoint = Endpoint(params: params)
+        let partitionableNumber = PartitionableNumber(params: params)
         
-        endpointList += [endPoint]
+        partitionableNumberList += [partitionableNumber]
         
-        self.addChild(endPoint)
+        self.addChild(partitionableNumber)
         
         location.x += 36
       }
@@ -76,8 +76,8 @@ class EndpointContainer : SKNode {
     }
   }
   
-  func getNextEndpoint() -> Endpoint? {
-    return (endpointIndex < 9) ? endpointList[endpointIndex++] : nil
+  func getNextPartitionableNumber() -> PartitionableNumber? {
+    return (endpointIndex < 9) ? partitionableNumberList[endpointIndex++] : nil
   }
 }
   

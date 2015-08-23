@@ -7,57 +7,133 @@ import Foundation
 import SpriteKit
 
 import SwiftyJSON
+import Dollar
+
 
 class PouchContainer : SKNode {
   
   typealias IntArray = [Int]
 
-  class func callArithmeticAPI(targetNum: Int, completionHandler:(success:Bool, blockArray: [IntArray]) -> Void) {
-    var blockArray = [IntArray]()
-
-//    let url     = "http://localhost:3000/api/v1/segments/three_segments/?whole_num=\(targetNum)&low_limit=1&high_limit=\(targetNum)"
-    let url     = "http://numapi.herokuapp.com/api/v1/segments/three_segments/?whole_num=\(targetNum)&low_limit=1&high_limit=\(targetNum)"
+  var targetNum : Int?
+  
+  func setTargetNum(target: Int) {
+      targetNum = target
+  }
+  
+  func getBlockTriplet(jsonData: JSON) -> [IntArray] {
     
-    let myUrl   = NSURL(string: url)
+    var blockTriplet = [IntArray]()
     
-    let task = NSURLSession.sharedSession().dataTaskWithURL(myUrl!) {(data, response, error) in
+    for (x: String, outDict: JSON) in jsonData {
       
-      if error != nil {
-          println("---> error = \(error)")
-        
-        completionHandler(success: false, blockArray: blockArray)
-        return
-      }
-      
-      let json = JSON(data: data)
-      
-      println("json: \(json)")
-      for (x: String, outDict: JSON) in json {
-
-        let y = outDict.rawValue as! [String : AnyObject]
-        
-        println("x: \(x)")
-        println("y: \(y)")
-        
-        if x != "output" { continue }
-            
-        println("outDict: \(outDict)")
-
+      if x == "output" {
         let s1 = outDict["first_segment"].rawValue as! IntArray
         let s2 = outDict["second_segment"].rawValue as! IntArray
         let s3 = outDict["third_segment"].rawValue as! IntArray
         
-        blockArray = [s1, s2, s3]
+        blockTriplet = [s1, s2, s3]
         
-        println("blockArray: \(blockArray)")
-    }
-      
-      completionHandler(success: true, blockArray: blockArray)
+        break
+      }
     }
     
-    task.resume()
+    return blockTriplet
+  }
+  
+  func valueTripletHasDuplicates(valueTriplet: IntArray) -> Bool {
+    return (valueTriplet.count != $.uniq(valueTriplet).count)
+  }
+  
+  func blockTripletIsValid(blockTriplet: [IntArray]) -> Bool {
+    
+    for valueTriplet in blockTriplet {
+      if valueTripletHasDuplicates(valueTriplet) { return false }
+    }
+    
+    return true
   }
 
+  func getBlockTripletFromApi() {
+    var blockTriplet = [IntArray]()
+    
+    let myUrl   = NSURL(string: self.getApiUrlString(targetNum!))
+    
+    let request = NSURLRequest(URL:myUrl!)
+
+    NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue()) { response,data,error in
+      
+      if error == nil {        
+        let jsonData = JSON(data: data)
+        
+        blockTriplet = self.getBlockTriplet(jsonData)
+        
+        if self.blockTripletIsValid(blockTriplet) {
+          let notificationName = "validTriplet"
+          
+          let notification = NSNotification(name: notificationName,
+            object: self,
+            
+            userInfo: [
+              "targetNum"       : self.targetNum!,
+              "blockTriplet"    : blockTriplet
+            ]
+          )
+          
+          NSNotificationCenter.defaultCenter().postNotification(notification)
+        }
+        else {
+          println("--> invalid blockTriplet: \(blockTriplet)")
+          
+          let notificationName = "invalidTriplet"
+          
+          let notification = NSNotification(name: notificationName,
+            object: self,
+            
+            userInfo: [
+              "targetNum"       : self.targetNum!,
+              "blockTriplet"    : blockTriplet
+            ]
+          )
+          
+          NSNotificationCenter.defaultCenter().postNotification(notification)
+        }
+      }
+      else {
+        println("---> error = \(error)")
+        
+        let notificationName = "apiError"
+        
+        let notification = NSNotification(name: notificationName,
+          object: self,
+          
+          userInfo: ["error" : error]
+        )
+        
+        NSNotificationCenter.defaultCenter().postNotification(notification)
+      }
+      
+    }
+  }
+
+  func setInvalidTripletObserver() {
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleInvalidTriplet:", name: "invalidTriplet", object: nil)
+  }
+  
+  @objc func handleInvalidTriplet(notificationObject : AnyObject) {
+    print("---> notificationObject = \(notificationObject)")
+    
+    self.getBlockTripletFromApi()
+  }
+
+  func getApiUrlString(targetNum: Int) -> String {
+    
+    let url     = "http://localhost:3000/api/v1/segments/three_segments/?whole_num=\(targetNum)&low_limit=1&high_limit=\(targetNum)"
+    
+    //    let url     = "http://numapi.herokuapp.com/api/v1/segments/three_segments/?whole_num=\(targetNum)&low_limit=1&high_limit=\(targetNum)"
+    
+    return url
+  }
+  
   private func getPouchLabel(label: String) -> SKLabelNode {
     
     let pouchLabel          = SKLabelNode()
@@ -67,8 +143,8 @@ class PouchContainer : SKNode {
     
     pouchLabel.text         = label
     
-      pouchLabel.xScale       = 0.7
-      pouchLabel.yScale       = 0.7
+    pouchLabel.xScale       = 0.7
+    pouchLabel.yScale       = 0.7
     
     return pouchLabel
   }
@@ -80,11 +156,9 @@ class PouchContainer : SKNode {
       spacing:          CGFloat                 = 40.0,
       groupSpacing:     CGFloat                 = 20.0
 
-    println("addArrowPouches(): start")
-
     removeAllChildren()
     
-//    var location = CGPointMake(self.frame.midX + 300, self.frame.midY + 160)
+    //    var location = CGPointMake(self.frame.midX + 300, self.frame.midY + 160)
     var location = CGPointMake(self.frame.midX + 300, self.frame.midY + 120)
 
     for groupCount in 0 ..< 3 {
@@ -134,6 +208,8 @@ class PouchContainer : SKNode {
     
     return nil
   }
-  
 
+  deinit {
+    NSNotificationCenter.defaultCenter().removeObserver(self)
+  }
 }

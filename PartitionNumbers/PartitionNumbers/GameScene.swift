@@ -25,9 +25,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     targetBrickContainer          : TargetBrickContainer?,
     partitionableNumberContainer  : PartitionableNumberContainer?,
   
+//    previousPartitionableNumber   : PartitionableNumber?,
     currentPartitionableNumber    : PartitionableNumber?,
   
-    currentTargetNum              = 0
+    currentPartitionableNum = 0
   
   var targetsCompleted : Int = 0 {
     didSet {
@@ -135,17 +136,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     setNewPartionableNumber()
   }
   
+  
   func setNewPartionableNumber() {
+    func unHighlightPreviousGoal() {
+      currentPartitionableNumber?.removeHighlight()
+    }
+
+    func highlightNewGoal() {
+      let goalShape = currentPartitionableNumber!.highlightShape()
+      self.addChild(goalShape)
+    }
+    
+    unHighlightPreviousGoal()
+    
     currentPartitionableNumber  = self.partitionableNumberContainer!.getNextPartitionableNumber()
     
-    self.currentTargetNum = currentPartitionableNumber!.targetNum
+    highlightNewGoal()
     
-    arrowPouchContainer!.setTargetNum(currentTargetNum)
+    currentPartitionableNum = currentPartitionableNumber!.targetNum
+    
+    arrowPouchContainer!.setTargetNum(currentPartitionableNum)
 
     targetBrickContainer = TargetBrickContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
     let location = CGPointMake(self.frame.midX - 124, targetBrickContainer!.position.y + 120)
     
-    targetBrickContainer!.createBrickList(self.currentTargetNum, inLocation: location)
+    targetBrickContainer!.createBrickList(currentPartitionableNum, inLocation: location)
     
     self.addChild(targetBrickContainer!)
     

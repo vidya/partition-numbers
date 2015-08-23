@@ -12,6 +12,7 @@ import SpriteKit
 class PartitionableNumber : VJSprite {
   var targetNum = 0
   var label : SKLabelNode?
+  var goalShape: SKShapeNode?
   
   convenience init(params: [String : AnyObject]) {
     self.init(properties: params)
@@ -27,6 +28,22 @@ class PartitionableNumber : VJSprite {
   
   func setCompleted() {  
     label!.text = "X"
+  }
+  
+  func removeHighlight() {
+      goalShape?.removeFromParent()
+  }
+  
+  func highlightShape() -> SKShapeNode {
+    var goalShape = SKShapeNode(rect: self.frame)
+    
+    goalShape.strokeColor = SKColor.blueColor()
+    goalShape.fillColor = SKColor.redColor()
+    goalShape.glowWidth = 4
+    
+    self.goalShape = goalShape
+    
+    return goalShape
   }
   
   private func getPartitionableNumberLabel(inLabel: String) -> SKLabelNode {

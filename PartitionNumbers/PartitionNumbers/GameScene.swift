@@ -21,7 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
  }
   
   var
-    pouchContainer        : PouchContainer?,
+    arrowPouchContainer   : ArrowPouchContainer?,
   
     targetContainer       : TargetContainer?,
     endpointContainer     : EndpointContainer?,
@@ -64,7 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         arrowCollideWithBrick(arrow, brick: brick)
         {(success : Bool, allDone: Bool) -> Void in
-         self.pouchContainer!.removePouchGroup(arrow.getGroup())
+         self.arrowPouchContainer!.removePouchGroup(arrow.getGroup())
           
           self.targetContainer!.removeBrick(brick)
           
@@ -123,12 +123,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     addChild(endpointContainer!)
 
-    pouchContainer = PouchContainer()
-    self.addChild(pouchContainer!)
+    arrowPouchContainer = ArrowPouchContainer()
+    self.addChild(arrowPouchContainer!)
     
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleValidTriplet:", name: "validTriplet", object: nil)
     
-    pouchContainer!.setInvalidTripletObserver()
+    arrowPouchContainer!.setInvalidTripletObserver()
     
     UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 
@@ -140,7 +140,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     self.currentTargetNum = self.currentEndpoint!.targetNum
     
-    pouchContainer!.setTargetNum(currentTargetNum)
+    arrowPouchContainer!.setTargetNum(currentTargetNum)
 
     self.targetContainer = TargetContainer(location: CGPointMake(self.frame.midX - 580, self.frame.midY + 000))
     let location = CGPointMake(self.frame.midX - 124, self.targetContainer!.position.y + 120)
@@ -149,7 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     self.addChild(self.targetContainer!)
     
-    pouchContainer!.getBlockTripletFromApi()
+    arrowPouchContainer!.getBlockTripletFromApi()
   }
   
   @objc func handleValidTriplet(notificationObject : AnyObject) {
@@ -160,7 +160,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let userInfo = notification.userInfo as! [String : AnyObject]
     let blockArray = notification.userInfo!["blockTriplet"] as! [IntArray]
     
-    self.pouchContainer!.addArrowPouches(blockArray)
+    arrowPouchContainer!.addArrowPouches(blockArray)
   }
 
   
@@ -201,7 +201,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     for touch: AnyObject in touches {
       let location = touch.locationInNode(self)
       
-      if let btn = pouchContainer!.getTouchedPouch(location) {
+      if let btn = arrowPouchContainer!.getTouchedPouch(location) {
         
         let arrowList = btn.createArrows(location)
         shootArrows(arrows: arrowList)

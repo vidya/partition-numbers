@@ -10,7 +10,7 @@ import SwiftyJSON
 import Dollar
 
 
-class PouchContainer : SKNode {
+class ArrowPouchContainer: SKNode {
   
   typealias IntArray = [Int]
 

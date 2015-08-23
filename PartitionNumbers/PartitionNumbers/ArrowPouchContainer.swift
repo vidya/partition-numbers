@@ -53,6 +53,20 @@ class ArrowPouchContainer: SKNode {
     return true
   }
 
+  func sortBlockTriplet(blockTriplet: [IntArray]) -> [IntArray] {
+    
+    var sortedBlockTriplet = [IntArray]()
+    
+    for block in blockTriplet {
+      var tmpBlock = block
+      tmpBlock.sort(<)
+      
+      sortedBlockTriplet += [tmpBlock]
+    }
+
+    return sortedBlockTriplet
+  }
+  
   func getBlockTripletFromApi() {
     var blockTriplet = [IntArray]()
     
@@ -68,14 +82,16 @@ class ArrowPouchContainer: SKNode {
         blockTriplet = self.getBlockTriplet(jsonData)
         
         if self.blockTripletIsValid(blockTriplet) {
+          
           let notificationName = "validTriplet"
           
-          let notification = NSNotification(name: notificationName,
+          let notification = NSNotification(
+            name: notificationName,
             object: self,
             
             userInfo: [
               "targetNum"       : self.targetNum!,
-              "blockTriplet"    : blockTriplet
+              "blockTriplet"    : self.sortBlockTriplet(blockTriplet)
             ]
           )
           
@@ -86,12 +102,13 @@ class ArrowPouchContainer: SKNode {
           
           let notificationName = "invalidTriplet"
           
-          let notification = NSNotification(name: notificationName,
+          let notification = NSNotification(
+            name: notificationName,
             object: self,
             
             userInfo: [
               "targetNum"       : self.targetNum!,
-              "blockTriplet"    : blockTriplet
+              "blockTriplet"    : self.sortBlockTriplet(blockTriplet)
             ]
           )
           
@@ -103,7 +120,8 @@ class ArrowPouchContainer: SKNode {
         
         let notificationName = "apiError"
         
-        let notification = NSNotification(name: notificationName,
+        let notification = NSNotification(
+          name: notificationName,
           object: self,
           
           userInfo: ["error" : error]

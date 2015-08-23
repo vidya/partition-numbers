@@ -37,8 +37,9 @@ class EndpointContainer : SKNode {
     self.init()
 
     var targetNum : Int
-    
-    endpointList = []
+   
+    // sort target numbers
+    //
     for groupCount in 0 ..< 3 {
       for eltCount in 0 ..< 3 {
         
@@ -47,10 +48,18 @@ class EndpointContainer : SKNode {
         do {
           targetNum = Int(arc4random() % 88) + 11
         } while contains(targetNumList, targetNum)
-
-        targetNumList += [targetNum]
         
-        params["targetNum"]   = targetNum
+        targetNumList += [targetNum]
+      }
+    }
+    
+    targetNumList.sort(<)
+    
+    endpointList = []
+    for groupCount in 0 ..< 3 {
+      for eltCount in 0 ..< 3 {
+
+        params["targetNum"]   = targetNumList[3 * groupCount + eltCount]
         params["location"]    = NSValue(CGPoint: location)
 
         let endPoint = Endpoint(params: params)

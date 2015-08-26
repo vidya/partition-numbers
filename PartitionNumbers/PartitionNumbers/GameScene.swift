@@ -25,7 +25,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     targetBrickContainer          : TargetBrickContainer?,
     partitionableNumberContainer  : PartitionableNumberContainer?,
   
-//    previousPartitionableNumber   : PartitionableNumber?,
     currentPartitionableNumber    : PartitionableNumber?,
   
     currentPartitionableNum = 0
